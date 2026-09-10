@@ -7,7 +7,7 @@ EAPI=8
 TAG="b10826"
 MY_P="llama.cpp-${TAG}"
 
-inherit cmake edo toolchain-funcs cuda
+inherit cmake edo toolchain-funcs cuda systemd
 
 DESCRIPTION="LLM inference engine (GGUF) — server, CLI, quantize, perplexity, embedding, RPC"
 HOMEPAGE="https://github.com/ggml-org/llama.cpp"
@@ -36,11 +36,12 @@ X86_CPU_FLAGS=(
 	sse4_2
 )
 CPU_FLAGS=( "${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}" )
-IUSE="${CPU_FLAGS[*]} cuda openmp server rpc examples test vulkan blas opencl rocm sycl metal llamafile curl native"
+IUSE="${CPU_FLAGS[*]} cuda openmp server rpc examples test vulkan blas opencl rocm sycl metal llamafile curl native system-ggml systemd openrc"
 
 REQUIRED_USE="
 	|| ( cuda opencl vulkan rocm sycl metal )
 	?? ( cuda rocm )
+	server? ( || ( systemd openrc ) )
 "
 
 RESTRICT="!test? ( test )"
@@ -50,18 +51,25 @@ RDEPEND="
 	vulkan? ( media-libs/vulkan-loader )
 	blas? ( virtual/blas )
 	opencl? ( virtual/opencl )
+	server? (
+		acc-user/llamacpp
+		systemd? ( sys-apps/systemd )
+		openrc? ( sys-apps/openrc )
+	)
 	rocm? (
 		>=dev-util/hip-7.2
 		>=sci-libs/hipBLAS-7.2
 	)
 	sycl? ( dev-util/intel-oneapi-compiler-dpcpp-cpp )
 	metal? ( dev-libs/metal )
-	>=sci-ml/ggml-0.23.0:=
-	cuda? ( >=sci-ml/ggml-0.23.0:=[cuda] )
-	vulkan? ( >=sci-ml/ggml-0.23.0:=[vulkan] )
-	blas? ( >=sci-ml/ggml-0.23.0:=[blas] )
-	opencl? ( >=sci-ml/ggml-0.23.0:=[opencl] )
-	rocm? ( >=sci-ml/ggml-0.23.0:=[rocm] )
+	system-ggml? (
+		>=sci-ml/ggml-0.23.0:=
+		cuda? ( >=sci-ml/ggml-0.23.0:=[cuda] )
+		vulkan? ( >=sci-ml/ggml-0.23.0:=[vulkan] )
+		blas? ( >=sci-ml/ggml-0.23.0:=[blas] )
+		opencl? ( >=sci-ml/ggml-0.23.0:=[opencl] )
+		rocm? ( >=sci-ml/ggml-0.23.0:=[rocm] )
+	)
 "
 DEPEND="${RDEPEND}
 	cuda? ( >=dev-util/nvidia-cuda-toolkit-12.9:= )
@@ -93,7 +101,7 @@ src_configure() {
 
 	# Build llama.cpp against the system ggml instead of the bundled one
 	local mycmakeargs=(
-		-DLLAMA_USE_SYSTEM_GGML=ON
+		-DLLAMA_USE_SYSTEM_GGML="$(usex system-ggml ON OFF)"
 		-DGGML_CUDA="$(usex cuda ON OFF)"
 		-DGGML_HIP="$(usex rocm ON OFF)"
 		-DGGML_VULKAN="$(usex vulkan ON OFF)"
@@ -156,6 +164,15 @@ src_install() {
 	cmake_src_install
 
 	dodoc README.md 2>/dev/null || true
+
+	if use server; then
+		keepdir /var/lib/llama.cpp/models
+		if use openrc; then
+			newconfd "${FILESDIR}/llama-server.confd" llama-server
+			newinitd "${FILESDIR}/llama-server.initd" llama-server
+		fi
+		use systemd && systemd_dounit "${FILESDIR}/llama-server.service"
+	fi
 }
 
 pkg_postinst() {

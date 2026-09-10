@@ -1,0 +1,2 @@
+# Model and server options. Add or remove options as needed.
+LLAMA_SERVER_ARGS="--model /var/lib/llama.cpp/models/model.gguf --host 127.0.0.1 --port 8080"

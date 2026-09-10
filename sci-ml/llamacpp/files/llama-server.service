@@ -1,0 +1,18 @@
+[Unit]
+Description=llama.cpp inference server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=llama
+Group=llama
+EnvironmentFile=-/etc/conf.d/llama-server
+ExecStart=/usr/bin/llama-server ${LLAMA_SERVER_ARGS}
+Restart=on-failure
+RestartSec=5
+StateDirectory=llama.cpp
+WorkingDirectory=/var/lib/llama.cpp
+
+[Install]
+WantedBy=multi-user.target

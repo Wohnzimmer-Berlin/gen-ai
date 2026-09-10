@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<use>
+		<flag name="cpu_flags_x86_avx">Aktiviert AVX-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_avx_vnni">Aktiviert AVX-VNNI-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_avx2">Aktiviert AVX2-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_avx512_bf16">Aktiviert AVX512-BF16-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_avx512bw">Aktiviert AVX512-BW-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_avx512f">Aktiviert AVX512F-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_avx512vbmi">Aktiviert AVX512-VBMI-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_avx512_vnni">Aktiviert AVX512-VNNI-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_bmi2">Aktiviert BMI2-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_fma3">Aktiviert FMA3-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_f16c">Aktiviert F16C-Unterstützung auf x86.</flag>
+		<flag name="cpu_flags_x86_sse4_2">Aktiviert SSE4.2-Unterstützung auf x86.</flag>
+		<flag name="cuda">Aktiviert das CUDA-Backend für NVIDIA-GPUs.</flag>
+		<flag name="openmp">Aktiviert parallele CPU-Berechnungen mit OpenMP.</flag>
+		<flag name="server">Baut den llama.cpp-HTTP-Server.</flag>
+		<flag name="rpc">Aktiviert das RPC-Backend für entfernte Berechnungen.</flag>
+		<flag name="examples">Baut die zusätzlichen llama.cpp-Beispielprogramme.</flag>
+		<flag name="test">Baut und führt die llama.cpp-Tests aus.</flag>
+		<flag name="vulkan">Aktiviert das Vulkan-Backend.</flag>
+		<flag name="blas">Aktiviert BLAS-Unterstützung für CPU-Berechnungen.</flag>
+		<flag name="opencl">Aktiviert das OpenCL-Backend.</flag>
+		<flag name="rocm">Aktiviert das ROCm/HIP-Backend für AMD-GPUs.</flag>
+		<flag name="sycl">Aktiviert das SYCL-Backend.</flag>
+		<flag name="metal">Aktiviert das Metal-Backend auf Apple-Systemen.</flag>
+		<flag name="llamafile">Aktiviert die llamafile-basierte SGEMM-Implementierung.</flag>
+		<flag name="curl">Aktiviert Netzwerkzugriff über libcurl.</flag>
+		<flag name="native">Optimiert den Build für die lokale CPU; das Ergebnis ist weniger portabel.</flag>
+		<flag name="systemd">Installiert die systemd-Unit für den llama.cpp-Server.</flag>
+		<flag name="openrc">Installiert das OpenRC-Init-Skript und die Konfiguration für den llama.cpp-Server.</flag>
+		<flag name="system-ggml">Nutzt die systemweit installierte sci-ml/ggml statt der internen, gebündelten Version von llama.cpp.</flag>
+	</use>
+</pkgmetadata>
