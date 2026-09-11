@@ -36,12 +36,16 @@ X86_CPU_FLAGS=(
 	sse4_2
 )
 CPU_FLAGS=( "${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}" )
-IUSE="${CPU_FLAGS[*]} cuda openmp server rpc examples test vulkan blas opencl rocm sycl metal llamafile curl native system-ggml systemd openrc"
+IUSE="${CPU_FLAGS[*]} cuda openmp server rpc examples test vulkan blas opencl rocm sycl metal llamafile curl native +system-ggml systemd openrc"
 
 REQUIRED_USE="
 	|| ( cuda opencl vulkan rocm sycl metal )
 	?? ( cuda rocm )
 	server? ( || ( systemd openrc ) )
+	cpu_flags_x86_avx512_bf16? ( cpu_flags_x86_avx512f )
+	cpu_flags_x86_avx512bw? ( cpu_flags_x86_avx512f )
+	cpu_flags_x86_avx512vbmi? ( cpu_flags_x86_avx512f )
+	cpu_flags_x86_avx512_vnni? ( cpu_flags_x86_avx512f )
 "
 
 RESTRICT="!test? ( test )"
@@ -65,10 +69,21 @@ RDEPEND="
 	system-ggml? (
 		>=sci-ml/ggml-0.23.0:=
 		cuda? ( >=sci-ml/ggml-0.23.0:=[cuda] )
+		openmp? ( >=sci-ml/ggml-0.23.0:=[openmp] )
 		vulkan? ( >=sci-ml/ggml-0.23.0:=[vulkan] )
-		blas? ( >=sci-ml/ggml-0.23.0:=[blas] )
-		opencl? ( >=sci-ml/ggml-0.23.0:=[opencl] )
 		rocm? ( >=sci-ml/ggml-0.23.0:=[rocm] )
+		cpu_flags_x86_avx? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_avx] )
+		cpu_flags_x86_avx_vnni? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_avx_vnni] )
+		cpu_flags_x86_avx2? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_avx2] )
+		cpu_flags_x86_avx512_bf16? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_avx512_bf16] )
+		cpu_flags_x86_avx512bw? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_avx512bw] )
+		cpu_flags_x86_avx512f? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_avx512f] )
+		cpu_flags_x86_avx512vbmi? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_avx512vbmi] )
+		cpu_flags_x86_avx512_vnni? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_avx512_vnni] )
+		cpu_flags_x86_bmi2? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_bmi2] )
+		cpu_flags_x86_fma3? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_fma3] )
+		cpu_flags_x86_f16c? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_f16c] )
+		cpu_flags_x86_sse4_2? ( >=sci-ml/ggml-0.23.0:=[cpu_flags_x86_sse4_2] )
 	)
 "
 DEPEND="${RDEPEND}
@@ -89,7 +104,7 @@ pkg_setup() {
 }
 
 # Default CUDA arch for RTX 4090 (sm_89); override via LLAMA_CUDA_ARCH env
-: "${LLAMA_CUDA_ARCH:=8.9}"
+: "${LLAMA_CUDA_ARCH:=89}"
 
 src_prepare() {
 	use cuda && cuda_src_prepare
@@ -136,8 +151,8 @@ src_configure() {
 		-DGGML_SSE42="$(usex cpu_flags_x86_sse4_2 ON OFF)"
 	)
 
-	# Enable AVX512 if ANY of the avx512 flags are present
-	if use cpu_flags_x86_avx512f || use cpu_flags_x86_avx512bw; then
+	# AVX512 extensions require the AVX512 foundation instruction set.
+	if use cpu_flags_x86_avx512f; then
 		mycmakeargs+=( -DGGML_AVX512=ON )
 	else
 		mycmakeargs+=( -DGGML_AVX512=OFF )
