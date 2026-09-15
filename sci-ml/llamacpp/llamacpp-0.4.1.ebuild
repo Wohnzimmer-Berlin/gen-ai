@@ -62,13 +62,7 @@ RDEPEND="
 	)
 	sycl? ( dev-util/intel-oneapi-compiler-dpcpp-cpp )
 	metal? ( dev-libs/metal )
-	system-ggml? (
-		>=sci-ml/ggml-0.23.0:=
-		cuda? ( >=sci-ml/ggml-0.23.0:=[cuda] )
-		vulkan? ( >=sci-ml/ggml-0.23.0:=[vulkan] )
-		blas? ( >=sci-ml/ggml-0.23.0:=[blas] )
-		opencl? ( >=sci-ml/ggml-0.23.0:=[opencl] )
-		rocm? ( >=sci-ml/ggml-0.23.0:=[rocm] )
+	system-ggml? ( sci-ml/ggml)
 	)
 "
 DEPEND="${RDEPEND}
