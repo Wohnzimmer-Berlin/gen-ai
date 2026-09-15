@@ -5,7 +5,7 @@ EAPI=8
 
 # Latest upstream tag (bump when updating)
 TAG="v0.4.1"
-MY_P="llama.cpp-${TAG#V}"
+MY_P="llama.cpp-${TAG#v}"
 
 inherit cmake edo toolchain-funcs cuda systemd
 
