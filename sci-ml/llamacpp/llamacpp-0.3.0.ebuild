@@ -56,7 +56,7 @@ RDEPEND="
 	blas? ( virtual/blas )
 	opencl? ( virtual/opencl )
 	server? (
-		acc-user/llamacpp
+		acct-user/llamacpp
 		systemd? ( sys-apps/systemd )
 		openrc? ( sys-apps/openrc )
 	)
