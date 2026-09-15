@@ -7,7 +7,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64"
 
-RDEPEND="acc-group/llamacpp"
+RDEPEND="acct-group/llamacpp"
 
 pkg_postinst() {
 	enewuser llama -1 llama /var/lib/llama.cpp /sbin/nologin
