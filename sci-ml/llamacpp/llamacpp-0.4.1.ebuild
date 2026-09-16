@@ -137,7 +137,7 @@ src_configure() {
 	fi
 
 	# CUDA architecture targeting
-	use cuda && mycmakeargs+=( -DCMAKE_CUDA_ARCHITECTURES="${LLAMA_CUDA_ARCH}" )
+	use cuda && mycmakeargs+=( -DCMAKE_CUDA_ARCHITECTURES="native" )
 
 	cmake_src_configure
 }
