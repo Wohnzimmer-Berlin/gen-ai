@@ -113,6 +113,7 @@ src_configure() {
 		-DBUILD_SHARED_LIBS=ON
 		-DCMAKE_POSITION_INDEPENDENT_CODE=ON
 		-DGGML_NATIVE="$(usex native ON OFF)"
+		-DCMAKE_SHARED_LINKER_FLAGS="-lblas -lcblas"
 	)
 
 	# CPU feature flags (map from cpu_flags_x86_* USE flags)
