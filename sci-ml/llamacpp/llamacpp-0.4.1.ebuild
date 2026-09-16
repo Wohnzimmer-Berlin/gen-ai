@@ -62,8 +62,7 @@ RDEPEND="
 	)
 	sycl? ( dev-util/intel-oneapi-compiler-dpcpp-cpp )
 	metal? ( dev-libs/metal )
-	system-ggml? ( sci-ml/ggml)
-	)
+	system-ggml? ( sci-ml/ggml )
 "
 DEPEND="${RDEPEND}
 	cuda? ( >=dev-util/nvidia-cuda-toolkit-12.9:= )
