@@ -29,7 +29,7 @@ RESTRICT="test"  # no network-touching test harness shipped; builds offline
 
 RDEPEND="
 	>=sci-ml/pytorch-2.6[${PYTHON_SINGLE_USEDEP}]
-	dev-python/tokenizers[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/tokenizers[${PYTHON_SINGLE_USEDEP}]
 	dev-python/safetensors[${PYTHON_SINGLE_USEDEP}]
 	dev-python/marisa-trie[${PYTHON_SINGLE_USEDEP}]
 	dev-python/numpy[${PYTHON_SINGLE_USEDEP}]
