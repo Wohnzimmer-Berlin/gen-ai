@@ -49,7 +49,7 @@ RESTRICT="!test? ( test )"
 RDEPEND="
 	curl? ( net-misc/curl:= )
 	vulkan? ( media-libs/vulkan-loader )
-	blas? ( virtual/blas )
+	blas? ( || ( virtual/blas virtual/cblas ) )
 	opencl? ( virtual/opencl )
 	server? (
 		acct-user/llamacpp
@@ -113,8 +113,11 @@ src_configure() {
 		-DBUILD_SHARED_LIBS=ON
 		-DCMAKE_POSITION_INDEPENDENT_CODE=ON
 		-DGGML_NATIVE="$(usex native ON OFF)"
-		-DCMAKE_SHARED_LINKER_FLAGS="-lblas -lcblas"
 	)
+
+	if use blas; then
+		mycmakeargs+=( -DCMAKE_SHARED_LINKER_FLAGS="-lblas -lcblas" )
+	fi
 
 	# CPU feature flags (map from cpu_flags_x86_* USE flags)
 	mycmakeargs+=(

@@ -53,7 +53,7 @@ RESTRICT="!test? ( test )"
 RDEPEND="
 	curl? ( net-misc/curl:= )
 	vulkan? ( media-libs/vulkan-loader )
-	blas? ( virtual/blas )
+	blas? ( || ( virtual/blas virtual/cblas ) )
 	opencl? ( virtual/opencl )
 	server? (
 		acct-user/llamacpp
