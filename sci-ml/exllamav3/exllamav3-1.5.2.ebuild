@@ -26,6 +26,7 @@ RDEPEND="
 	>=sci-ml/safetensors-0.3.2
 	dev-python/marisa-trie
 	dev-python/filelock
+	cuda? ( dev-python/triton )
 	>=dev-python/numpy-2.1.0
 	dev-python/rich
 	dev-python/pydantic
