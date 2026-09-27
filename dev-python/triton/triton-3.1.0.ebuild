@@ -34,10 +34,11 @@ BDEPEND="
 src_prepare() {
 	sed -i -e 's/-Werror//g' CMakeLists.txt setup.py 2>/dev/null || true
 	default
+	cmake_src_prepare
 }
 
 src_configure() {
-	local mycmakeargs=(
+	mycmakeargs=(
 		-G Ninja
 		-DTRITON_BUILD_PYTHON_MODULE=ON
 		-DTRITON_USE_CUDA=ON
