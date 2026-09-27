@@ -3,7 +3,10 @@
 
 EAPI=8
 
-inherit cuda toolchain-funcs
+PYTHON_COMPAT=( python3_{10..14} )
+DISTUTILS_USE_PEP517=setuptools
+
+inherit cuda distutils-r1 toolchain-funcs
 
 DESCRIPTION="Optimized quantization and inference library for LLMs on consumer GPUs"
 HOMEPAGE="https://github.com/turboderp-org/exllamav3"
