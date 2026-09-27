@@ -22,6 +22,7 @@ RDEPEND="
 	>=sci-ml/tokenizers-0.21.1
 	>=sci-ml/safetensors-0.3.2
 	dev-python/marisa-trie
+	dev-python/filelock
 	>=dev-python/numpy-2.1.0
 	dev-python/rich
 	dev-python/pydantic
