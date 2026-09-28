@@ -14,7 +14,7 @@ SRC_URI="https://github.com/turboderp-org/exllamav3/archive/refs/tags/v${PV}.tar
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="amd64"
 
 IUSE="cuda rocm flash-attn guidance"
 REQUIRED_USE="?? ( cuda rocm )"

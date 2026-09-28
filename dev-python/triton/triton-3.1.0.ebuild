@@ -15,12 +15,13 @@ SRC_URI="https://github.com/openai/triton/archive/refs/tags/v${PV}.tar.gz -> ${P
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="cuda"
-REQUIRED_USE="cuda"
+IUSE="cuda amd"
+REQUIRED_USE="cuda? ( !amd )"
 RESTRICT="test"
 
 RDEPEND="
 	cuda? ( >=dev-util/nvidia-cuda-toolkit-12.0:= )
+	amd? ( dev-util/roctracer )
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
@@ -60,7 +61,8 @@ src_configure() {
 	mycmakeargs=(
 		-G Ninja
 		-DTRITON_BUILD_PYTHON_MODULE=ON
-		-DTRITON_USE_CUDA=ON
+		-DTRITON_USE_CUDA=$(usex cuda ON OFF)
+		-DTRITON_BUILD_PROTON=OFF
 		-DCMAKE_CUDA_ARCHITECTURES=${TORCH_CUDA_ARCH_LIST}
 	)
 	cmake_src_configure
