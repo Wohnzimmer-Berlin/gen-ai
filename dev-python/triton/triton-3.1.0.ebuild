@@ -58,6 +58,7 @@ src_configure() {
 			fi
 		fi
 	fi
+	export LLVM_EXTERNAL_LIT=""
 	mycmakeargs=(
 		-G Ninja
 		-DTRITON_BUILD_PYTHON_MODULE=ON
