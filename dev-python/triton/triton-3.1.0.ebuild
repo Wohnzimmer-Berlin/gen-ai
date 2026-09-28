@@ -29,6 +29,8 @@ BDEPEND="
 	dev-python/pybind11
 	>=dev-python/setuptools-69
 	dev-python/wheel
+	llvm-core/mlir
+	sys-libs/zlib
 "
 
 src_prepare() {
@@ -38,11 +40,28 @@ src_prepare() {
 }
 
 src_configure() {
+	if use cuda; then
+		if [[ -x /opt/cuda/bin/nvcc ]]; then
+			export CUDA_HOME="/opt/cuda"
+		elif [[ -x /usr/bin/nvcc ]]; then
+			export CUDA_HOME="/usr"
+		fi
+		if [[ -z ${TORCH_CUDA_ARCH_LIST} ]]; then
+			local gpu_arch
+			gpu_arch=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader 2>/dev/null \
+				| head -1 | tr -d ' ')
+			if [[ -n "${gpu_arch}" ]]; then
+				export TORCH_CUDA_ARCH_LIST="${gpu_arch}"
+			else
+				export TORCH_CUDA_ARCH_LIST="8.9"
+			fi
+		fi
+	fi
 	mycmakeargs=(
 		-G Ninja
 		-DTRITON_BUILD_PYTHON_MODULE=ON
 		-DTRITON_USE_CUDA=ON
-		-DCMAKE_CUDA_ARCHITECTURES=89
+		-DCMAKE_CUDA_ARCHITECTURES=${TORCH_CUDA_ARCH_LIST}
 	)
 	cmake_src_configure
 }

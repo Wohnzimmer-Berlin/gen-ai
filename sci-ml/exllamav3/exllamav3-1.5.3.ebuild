@@ -1,0 +1,90 @@
+# Copyright 2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+PYTHON_COMPAT=( python3_{10..14} )
+DISTUTILS_USE_PEP517=setuptools
+
+inherit cuda distutils-r1 toolchain-funcs
+
+DESCRIPTION="Optimized quantization and inference library for LLMs on consumer GPUs"
+HOMEPAGE="https://github.com/turboderp-org/exllamav3"
+SRC_URI="https://github.com/turboderp-org/exllamav3/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
+
+LICENSE="MIT"
+SLOT="0"
+KEYWORDS="~amd64"
+
+IUSE="cuda rocm flash-attn guidance"
+REQUIRED_USE="?? ( cuda rocm )"
+RESTRICT="test"
+
+RDEPEND="
+	>=sci-ml/pytorch-2.6
+	>=sci-ml/tokenizers-0.21.1
+	>=sci-ml/safetensors-0.3.2
+	dev-python/marisa-trie
+	dev-python/filelock
+	cuda? ( dev-python/triton )
+	>=dev-python/numpy-2.1.0
+	dev-python/rich
+	dev-python/pydantic
+	dev-python/pillow
+	dev-python/pyyaml
+	dev-python/typing-extensions
+	guidance? ( >=dev-python/llguidance-1.7.0 )
+	flash-attn? ( >=dev-python/flash-linear-attention-0.5.0 )
+"
+BDEPEND="
+	${RDEPEND}
+	dev-build/ninja
+	cuda? ( >=dev-util/nvidia-cuda-toolkit-12.9:= )
+	rocm? ( >=dev-util/hip-5.7:= )
+"
+
+src_prepare() {
+	sed -i -e '/^ninja$/d' requirements.txt 2>/dev/null || true
+	sed -i \
+		-e '/llguidance/d' \
+		-e '/flash-linear-attention/d' \
+		setup.py || die
+	default
+}
+
+src_configure() {
+	if use cuda; then
+		# Resolve CUDA toolkit bin path
+		if [[ -x /opt/cuda/bin/nvcc ]]; then
+			export PATH="/opt/cuda/bin:${PATH}"
+		elif [[ -x /usr/bin/nvcc ]]; then
+			export PATH="/usr/bin:${PATH}"
+		fi
+		if ! command -v nvcc >/dev/null 2>&1; then
+			die "nvcc not found; install dev-util/nvidia-cuda-toolkit (>=12.9)"
+		fi
+		if [[ -z ${TORCH_CUDA_ARCH_LIST} ]]; then
+			# Auto-detect GPU compute capability via nvidia-smi
+			local gpu_arch
+			gpu_arch=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader 2>/dev/null \
+				| head -1 | tr -d ' ')
+			if [[ -n "${gpu_arch}" ]]; then
+				export TORCH_CUDA_ARCH_LIST="${gpu_arch}"
+			else
+				ewarn "nvidia-smi arch detection failed, defaulting to 8.9"
+				export TORCH_CUDA_ARCH_LIST="8.9"
+			fi
+		fi
+	fi
+	# Unset to allow compilation; empty string disables it
+	unset EXLLAMA_NOCOMPILE
+	default
+}
+
+src_compile() {
+	distutils-r1_python_setup build_ext --inplace || die
+}
+
+src_install() {
+	distutils-r1_python_setup install --root="${D}" --optimize=2 || die
+}
